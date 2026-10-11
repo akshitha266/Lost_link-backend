@@ -87,4 +87,66 @@ class AuthServiceTest {
         assertThrows(BadRequestException.class, () -> authService.register(registerRequest));
         verify(userRepository, never()).save(any(User.class));
     }
+
+    @Test
+    void login_Success() {
+        when(userRepository.findByEmail("student@college.edu")).thenReturn(java.util.Optional.of(
+                User.builder()
+                        .id(10L)
+                        .name("Test Student")
+                        .email("student@college.edu")
+                        .password("$2a$10$hashedpasswordstring")
+                        .active(true)
+                        .build()
+        ));
+        when(passwordEncoder.matches("plainSecret123", "$2a$10$hashedpasswordstring")).thenReturn(true);
+
+        Authentication auth = mock(Authentication.class);
+        when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class))).thenReturn(auth);
+        when(tokenProvider.generateToken(auth)).thenReturn("mock.jwt.token");
+
+        com.lostlink.dto.request.LoginRequest loginRequest = com.lostlink.dto.request.LoginRequest.builder()
+                .email("student@college.edu")
+                .password("plainSecret123")
+                .build();
+
+        AuthResponse response = authService.login(loginRequest);
+
+        assertNotNull(response);
+        assertEquals("mock.jwt.token", response.getToken());
+        assertEquals("student@college.edu", response.getUser().getEmail());
+    }
+
+    @Test
+    void login_UnregisteredEmail_ThrowsBadRequestException() {
+        when(userRepository.findByEmail("unknown@college.edu")).thenReturn(java.util.Optional.empty());
+
+        com.lostlink.dto.request.LoginRequest loginRequest = com.lostlink.dto.request.LoginRequest.builder()
+                .email("unknown@college.edu")
+                .password("plainSecret123")
+                .build();
+
+        assertThrows(BadRequestException.class, () -> authService.login(loginRequest));
+    }
+
+    @Test
+    void login_WrongPassword_ThrowsBadRequestException() {
+        when(userRepository.findByEmail("student@college.edu")).thenReturn(java.util.Optional.of(
+                User.builder()
+                        .id(10L)
+                        .name("Test Student")
+                        .email("student@college.edu")
+                        .password("$2a$10$hashedpasswordstring")
+                        .active(true)
+                        .build()
+        ));
+        when(passwordEncoder.matches("wrongSecret", "$2a$10$hashedpasswordstring")).thenReturn(false);
+
+        com.lostlink.dto.request.LoginRequest loginRequest = com.lostlink.dto.request.LoginRequest.builder()
+                .email("student@college.edu")
+                .password("wrongSecret")
+                .build();
+
+        assertThrows(BadRequestException.class, () -> authService.login(loginRequest));
+    }
 }

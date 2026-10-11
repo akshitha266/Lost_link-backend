@@ -1,6 +1,7 @@
 package com.lostlink.controller;
 
 import com.lostlink.dto.request.ItemRequest;
+import com.lostlink.dto.request.ItemUpdateRequest;
 import com.lostlink.dto.response.ApiResponse;
 import com.lostlink.dto.response.ItemResponse;
 import com.lostlink.entity.ItemStatus;
@@ -71,7 +72,16 @@ public class ItemController {
     @Operation(summary = "Update an item (Owner or Admin only)")
     public ResponseEntity<ItemResponse> updateItem(
             @PathVariable Long id,
-            @Valid @RequestBody ItemRequest request,
+            @RequestBody ItemUpdateRequest request,
+            @AuthenticationPrincipal UserPrincipal currentUser) {
+        return ResponseEntity.ok(itemService.updateItem(id, request, currentUser));
+    }
+
+    @PatchMapping("/{id}")
+    @Operation(summary = "Partially update an item or change status (Owner or Admin only)")
+    public ResponseEntity<ItemResponse> patchItem(
+            @PathVariable Long id,
+            @RequestBody ItemUpdateRequest request,
             @AuthenticationPrincipal UserPrincipal currentUser) {
         return ResponseEntity.ok(itemService.updateItem(id, request, currentUser));
     }

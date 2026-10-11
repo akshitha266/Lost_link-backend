@@ -10,6 +10,7 @@ com\lostlink\controller\AdminController.class
 com\lostlink\dto\response\ApiResponse.class
 com\lostlink\dto\request\ClaimRequest.class
 com\lostlink\dto\response\DashboardStatsResponse.class
+com\lostlink\controller\RootController.class
 com\lostlink\dto\request\LoginRequest.class
 com\lostlink\controller\MatchController.class
 com\lostlink\LostLinkApplication.class
@@ -52,12 +53,14 @@ com\lostlink\repository\ClaimRepository.class
 com\lostlink\service\ItemService.class
 com\lostlink\service\UserService.class
 com\lostlink\dto\request\PasswordChangeRequest$PasswordChangeRequestBuilder.class
+com\lostlink\dto\request\ItemUpdateRequest$ItemUpdateRequestBuilder.class
 com\lostlink\dto\response\AuthResponse$AuthResponseBuilder.class
 com\lostlink\config\SecurityConfig.class
 com\lostlink\repository\UserRepository.class
 com\lostlink\controller\ItemController.class
 com\lostlink\dto\response\ClaimResponse.class
 com\lostlink\service\AuthService.class
+com\lostlink\dto\request\ItemUpdateRequest.class
 com\lostlink\controller\UserController.class
 com\lostlink\entity\User$UserBuilder.class
 com\lostlink\dto\request\PasswordChangeRequest.class

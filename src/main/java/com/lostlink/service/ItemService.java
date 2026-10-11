@@ -75,7 +75,7 @@ public class ItemService {
     }
 
     @Transactional
-    public ItemResponse updateItem(Long id, ItemRequest request, UserPrincipal currentUser) {
+    public ItemResponse updateItem(Long id, com.lostlink.dto.request.ItemUpdateRequest request, UserPrincipal currentUser) {
         Item item = itemRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Item not found with id: " + id));
 
@@ -86,23 +86,55 @@ public class ItemService {
             throw new ForbiddenException("You are not authorized to update this listing.");
         }
 
-        item.setTitle(request.getTitle().trim());
-        item.setDescription(request.getDescription().trim());
-        item.setCategory(request.getCategory().trim());
-        item.setDate(request.getDate());
-        item.setLocation(request.getLocation().trim());
+        if (request.getTitle() != null && !request.getTitle().isBlank()) {
+            item.setTitle(request.getTitle().trim());
+        }
+        if (request.getDescription() != null && !request.getDescription().isBlank()) {
+            item.setDescription(request.getDescription().trim());
+        }
+        if (request.getCategory() != null && !request.getCategory().isBlank()) {
+            item.setCategory(request.getCategory().trim());
+        }
+        if (request.getType() != null) {
+            item.setType(request.getType());
+        }
+        if (request.getDate() != null && !request.getDate().isBlank()) {
+            item.setDate(request.getDate());
+        }
+        if (request.getLocation() != null && !request.getLocation().isBlank()) {
+            item.setLocation(request.getLocation().trim());
+        }
         if (request.getImageUrl() != null) {
             item.setImageUrl(request.getImageUrl());
         }
-        if (request.getVerificationQuestion() != null) {
+        if (request.getStatus() != null) {
+            item.setStatus(request.getStatus());
+        }
+        if (request.getVerificationQuestion() != null && !request.getVerificationQuestion().isBlank()) {
             item.setVerificationQuestion(request.getVerificationQuestion().trim());
         }
-        if (request.getVerificationAnswer() != null) {
+        if (request.getVerificationAnswer() != null && !request.getVerificationAnswer().isBlank()) {
             item.setVerificationAnswer(request.getVerificationAnswer().trim());
         }
 
         Item updated = itemRepository.save(item);
         return mapToResponse(updated);
+    }
+
+    @Transactional
+    public ItemResponse updateItem(Long id, ItemRequest request, UserPrincipal currentUser) {
+        com.lostlink.dto.request.ItemUpdateRequest updateRequest = com.lostlink.dto.request.ItemUpdateRequest.builder()
+                .title(request.getTitle())
+                .description(request.getDescription())
+                .category(request.getCategory())
+                .type(request.getType())
+                .date(request.getDate())
+                .location(request.getLocation())
+                .imageUrl(request.getImageUrl())
+                .verificationQuestion(request.getVerificationQuestion())
+                .verificationAnswer(request.getVerificationAnswer())
+                .build();
+        return updateItem(id, updateRequest, currentUser);
     }
 
     @Transactional

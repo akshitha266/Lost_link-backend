@@ -56,6 +56,9 @@ public class SecurityConfig {
                 .headers(headers -> headers.frameOptions(frame -> frame.disable())) // Enable H2 console frames
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+                        // Public Root, Info & Error endpoints
+                        .requestMatchers("/", "/api", "/api/", "/error").permitAll()
+
                         // Public Auth APIs
                         .requestMatchers("/api/auth/**").permitAll()
 
@@ -64,7 +67,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/matches").permitAll()
 
                         // Public Swagger and Console endpoints
-                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/api-docs/**", "/h2-console/**").permitAll()
+                        .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**", "/api-docs/**", "/h2-console/**").permitAll()
 
                         // Admin Endpoints
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")

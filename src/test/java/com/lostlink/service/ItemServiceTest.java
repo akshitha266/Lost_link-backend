@@ -98,4 +98,51 @@ class ItemServiceTest {
         assertThrows(ForbiddenException.class, () -> itemService.deleteItem(100L, userPrincipal));
         verify(itemRepository, never()).delete(any(Item.class));
     }
+
+    @Test
+    void updateItem_PartialUpdate_StatusOnly_Success() {
+        Item item = Item.builder()
+                .id(50L)
+                .title("Scientific Calculator TI-84")
+                .description("Black graphic calculator with initials inscribed")
+                .category("Electronics")
+                .type(ItemType.FOUND)
+                .date("2026-10-01")
+                .location("Math Dept Room 101")
+                .status(ItemStatus.ACTIVE)
+                .userId(1L)
+                .postedByName("Alice")
+                .build();
+
+        when(itemRepository.findById(50L)).thenReturn(Optional.of(item));
+        when(itemRepository.save(any(Item.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        com.lostlink.dto.request.ItemUpdateRequest updateRequest = com.lostlink.dto.request.ItemUpdateRequest.builder()
+                .status(ItemStatus.RESOLVED)
+                .build();
+
+        ItemResponse response = itemService.updateItem(50L, updateRequest, userPrincipal);
+
+        assertNotNull(response);
+        assertEquals(ItemStatus.RESOLVED, response.getStatus());
+        assertEquals("Scientific Calculator TI-84", response.getTitle());
+    }
+
+    @Test
+    void updateItem_UnauthorizedUser_ThrowsForbiddenException() {
+        Item item = Item.builder()
+                .id(50L)
+                .userId(99L)
+                .status(ItemStatus.ACTIVE)
+                .build();
+
+        when(itemRepository.findById(50L)).thenReturn(Optional.of(item));
+
+        com.lostlink.dto.request.ItemUpdateRequest updateRequest = com.lostlink.dto.request.ItemUpdateRequest.builder()
+                .status(ItemStatus.RESOLVED)
+                .build();
+
+        assertThrows(ForbiddenException.class, () -> itemService.updateItem(50L, updateRequest, userPrincipal));
+        verify(itemRepository, never()).save(any(Item.class));
+    }
 }
