@@ -5,7 +5,6 @@ import com.lostlink.dto.response.ItemResponse;
 import com.lostlink.entity.Item;
 import com.lostlink.entity.ItemStatus;
 import com.lostlink.entity.ItemType;
-import com.lostlink.entity.Role;
 import com.lostlink.exception.ForbiddenException;
 import com.lostlink.exception.ResourceNotFoundException;
 import com.lostlink.repository.ItemRepository;

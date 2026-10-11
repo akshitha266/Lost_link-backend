@@ -9,7 +9,6 @@ import com.lostlink.entity.User;
 import com.lostlink.exception.BadRequestException;
 import com.lostlink.repository.UserRepository;
 import com.lostlink.security.JwtTokenProvider;
-import com.lostlink.security.UserPrincipal;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
